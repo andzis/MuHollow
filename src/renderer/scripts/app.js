@@ -8,8 +8,8 @@ class MuDMG {
         this.config = {};
         this.isUpdating = false;
         this.isReadyToPlay = false;
-        this.connectedAccounts = 0;
-        this.maxAccounts = 3;
+        this.onlinePlayers = 0;
+        this.maxPlayers = 500;
         this.accountCheckInterval = null;
         this.init();
     }
@@ -42,7 +42,7 @@ class MuDMG {
 
             this.handleUpdateProgress({
                 type: 'ready',
-                message: 'Initializing launcher...'
+                message: 'Inicializando launcher...'
             });
 
             setTimeout(() => {
@@ -63,7 +63,7 @@ class MuDMG {
         } catch (error) {
             console.error('[Launcher] Failed to initialize:', error);
             this.hideMainLoader();
-            this.showNotification('Failed to initialize: ' + error.message, 'error');
+            this.showNotification('Falha ao inicializar: ' + error.message, 'error');
         }
     }
 
@@ -293,60 +293,57 @@ class MuDMG {
             }
         } catch (error) {
             console.error('Update check failed:', error);
-            this.showNotification('Update check failed', 'error');
+            this.showNotification('Falha na verificação de atualização', 'error');
             this.handleUpdateProgress({
                 type: 'ready',
-                message: 'Update check failed - Please try again'
+                message: 'Falha na verificação - Tente novamente'
             });
         }
     }
 
-    // Account monitoring
+    // Monitoramento de jogadores online no servidor
     startAccountMonitoring() {
-        this.checkConnectedAccounts();
+        this.fetchOnlinePlayers();
         this.accountCheckInterval = setInterval(() => {
-            this.checkConnectedAccounts();
-        }, 3000);
+            this.fetchOnlinePlayers();
+        }, 30000); // atualiza a cada 30 segundos
     }
 
-    async checkConnectedAccounts() {
+    async fetchOnlinePlayers() {
         try {
-            const result = await ipcRenderer.invoke('get-connected-accounts');
-            this.connectedAccounts = result.count || 0;
+            const response = await fetch('http://muhollow.com.br/api/online.php', { cache: 'no-cache' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            this.onlinePlayers = data.online || 0;
+            this.maxPlayers = data.max || 500;
             this.updateAccountCounter();
             this.updatePlayButtonState();
         } catch (error) {
-            console.error('Error checking connected accounts:', error);
+            console.error('Erro ao buscar jogadores online:', error);
         }
     }
 
     updateAccountCounter() {
         const counterElement = document.getElementById('connectedAccounts');
+        const counterLimit = document.getElementById('counterLimit');
         const counterContainer = document.getElementById('accountCounter');
 
         if (counterElement) {
-            counterElement.textContent = this.connectedAccounts;
+            counterElement.textContent = this.onlinePlayers;
         }
-
+        if (counterLimit) {
+            counterLimit.textContent = this.maxPlayers;
+        }
         if (counterContainer) {
-            if (this.connectedAccounts >= this.maxAccounts) {
-                counterContainer.classList.add('limit-reached');
-            } else {
-                counterContainer.classList.remove('limit-reached');
-            }
+            counterContainer.classList.remove('limit-reached');
         }
     }
 
     updatePlayButtonState() {
         const playBtn = document.getElementById('playBtn');
-        if (playBtn) {
-            if (this.connectedAccounts >= this.maxAccounts) {
-                playBtn.disabled = true;
-                playBtn.title = `Limit of ${this.maxAccounts} accounts reached`;
-            } else if (this.isReadyToPlay) {
-                playBtn.disabled = false;
-                playBtn.title = 'Play Game';
-            }
+        if (playBtn && this.isReadyToPlay) {
+            playBtn.disabled = false;
+            playBtn.title = 'Jogar';
         }
     }
 
@@ -379,25 +376,25 @@ class MuDMG {
             });
 
             if (result.success) {
-                this.showNotification('Update completed successfully', 'success');
+                this.showNotification('Atualização concluída com sucesso', 'success');
                 this.handleUpdateProgress({
                     type: 'ready',
-                    message: 'Update completed successfully - Ready to play!'
+                    message: 'Atualização concluída - Pronto para jogar!'
                 });
                 this.enablePlayButton();
             } else {
-                this.showNotification(`Update failed: ${result.error}`, 'error');
+                this.showNotification(`Falha na atualização: ${result.error}`, 'error');
                 this.handleUpdateProgress({
                     type: 'ready',
-                    message: `Update failed: ${result.error} - Please try again`
+                    message: `Falha na atualização: ${result.error} - Tente novamente`
                 });
             }
         } catch (error) {
             console.error('Update failed:', error);
-            this.showNotification('Update failed', 'error');
+            this.showNotification('Falha na atualização', 'error');
             this.handleUpdateProgress({
                 type: 'ready',
-                message: 'Update failed - Please try again'
+                message: 'Falha na atualização - Tente novamente'
             });
         } finally {
             this.isUpdating = false;
@@ -443,21 +440,21 @@ class MuDMG {
 
         switch (progress.type) {
             case 'manifest':
-                statusText.textContent = 'Downloading update manifest...';
+                statusText.textContent = 'Baixando manifesto de atualização...';
                 if (downloadProgressFooter) downloadProgressFooter.style.width = '0%';
                 if (downloadTextFooter) downloadTextFooter.textContent = '0%';
                 if (overallProgressFooter) overallProgressFooter.style.width = '0%';
                 if (overallTextFooter) overallTextFooter.textContent = '0%';
                 break;
             case 'check':
-                statusText.textContent = 'Checking for updates...';
+                statusText.textContent = 'Verificando atualizações...';
                 if (downloadProgressFooter) downloadProgressFooter.style.width = '0%';
                 if (downloadTextFooter) downloadTextFooter.textContent = '0%';
                 if (overallProgressFooter) overallProgressFooter.style.width = '0%';
                 if (overallTextFooter) overallTextFooter.textContent = '0%';
                 break;
             case 'download':
-                statusText.textContent = `Downloading ${progress.current} of ${progress.total} files`;
+                statusText.textContent = `Baixando ${progress.current} de ${progress.total} arquivos`;
                 if (progress.total && progress.total > 0) {
                     const overallPercent = Math.round((progress.current / progress.total) * 100);
                     if (overallProgressFooter) overallProgressFooter.style.width = `${overallPercent}%`;
@@ -470,13 +467,13 @@ class MuDMG {
             case 'download-progress':
                 if (downloadProgressFooter) downloadProgressFooter.style.width = `${progress.progress}%`;
                 if (downloadTextFooter) downloadTextFooter.textContent = `${progress.progress}%`;
-                statusText.textContent = `Downloading: ${progress.file || 'file'}`;
+                statusText.textContent = `Baixando: ${progress.file || 'arquivo'}`;
                 break;
             case 'verify':
-                statusText.textContent = 'Verifying downloaded files...';
+                statusText.textContent = 'Verificando arquivos baixados...';
                 break;
             case 'ready':
-                statusText.textContent = progress.message || 'Ready to play';
+                statusText.textContent = progress.message || 'Pronto para jogar';
                 if (downloadProgressFooter) downloadProgressFooter.style.width = '100%';
                 if (downloadTextFooter) downloadTextFooter.textContent = '100%';
                 if (overallProgressFooter) overallProgressFooter.style.width = '100%';
@@ -489,13 +486,13 @@ class MuDMG {
         try {
             const result = await ipcRenderer.invoke('launch-game');
             if (result.success) {
-                this.showNotification('Launching game...', 'success');
+                this.showNotification('Iniciando jogo...', 'success');
             } else {
-                this.showNotification(`Failed to launch game: ${result.error}`, 'error');
+                this.showNotification(`Erro ao iniciar o jogo: ${result.error}`, 'error');
             }
         } catch (error) {
-            console.error('Exception during game launch:', error);
-            this.showNotification('Failed to launch game', 'error');
+            console.error('Erro ao iniciar o jogo:', error);
+            this.showNotification('Erro ao iniciar o jogo', 'error');
         }
     }
 
@@ -552,7 +549,7 @@ class MuDMG {
         this.isReadyToPlay = true;
         const playBtn = document.getElementById('playBtn');
         if (playBtn) playBtn.disabled = false;
-        this.setPlayButtonText('PLAY');
+        this.setPlayButtonText('JOGAR');
     }
 
     disablePlayButton() {

@@ -59,13 +59,13 @@ class SettingsManager {
             
             if (result.success) {
                 document.getElementById('gamePath').value = result.path;
-                this.showNotification('Game directory selected successfully', 'success');
+                this.showNotification('Pasta do jogo selecionada com sucesso', 'success');
             } else {
                 this.showNotification(result.error, 'error');
             }
         } catch (error) {
-            console.error('Failed to browse game path:', error);
-            this.showNotification('Failed to select game directory', 'error');
+            console.error('Erro ao selecionar pasta do jogo:', error);
+            this.showNotification('Erro ao selecionar pasta do jogo', 'error');
         }
     }
 
@@ -95,11 +95,11 @@ class SettingsManager {
                     window.muDMG.config = { ...window.muDMG.config, ...config };
                 }
             } else {
-                this.showNotification(`Failed to save settings: ${result.error}`, 'error');
+                this.showNotification(`Erro ao salvar configurações: ${result.error}`, 'error');
             }
         } catch (error) {
-            console.error('Failed to save settings:', error);
-            this.showNotification('Failed to save settings', 'error');
+            console.error('Erro ao salvar configurações:', error);
+            this.showNotification('Erro ao salvar configurações', 'error');
         }
     }
 
@@ -163,18 +163,18 @@ class SettingsManager {
             
             if (result.success) {
                 this.loadSettingsToForm(defaultConfig);
-                this.showNotification('Settings reset to default', 'success');
+                this.showNotification('Configurações restauradas para o padrão', 'success');
                 
                 // Atualizar configuração global
                 if (window.muDMG) {
                     window.muDMG.config = { ...window.muDMG.config, ...defaultConfig };
                 }
             } else {
-                this.showNotification('Failed to reset settings', 'error');
+                this.showNotification('Erro ao restaurar configurações', 'error');
             }
         } catch (error) {
-            console.error('Failed to reset settings:', error);
-            this.showNotification('Failed to reset settings', 'error');
+            console.error('Erro ao restaurar configurações:', error);
+            this.showNotification('Erro ao restaurar configurações', 'error');
         }
     }
 

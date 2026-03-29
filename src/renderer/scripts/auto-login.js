@@ -181,12 +181,12 @@ class AutoLoginManager {
             accountCard.setAttribute('data-account', accountNumber);
             
             accountCard.innerHTML = `
-                <h4>Account ${accountNumber}</h4>
+                <h4>Conta ${accountNumber}</h4>
                 <div class="input-field">
-                    <input type="text" id="user${accountNumber}" placeholder="Username" value="${account.username || ''}">
+                    <input type="text" id="user${accountNumber}" placeholder="Usuário" value="${account.username || ''}">
                 </div>
                 <div class="input-field">
-                    <input type="password" id="password${accountNumber}" placeholder="Password" value="${account.password || ''}">
+                    <input type="password" id="password${accountNumber}" placeholder="Senha" value="${account.password || ''}">
                 </div>
             `;
             
@@ -266,10 +266,10 @@ class AutoLoginManager {
         const result = await this.saveXAccountsData();
         
         if (result.success) {
-            this.showNotification('Auto Login configuration saved successfully', 'success');
+            this.showNotification('Configuração de Auto Login salva com sucesso', 'success');
             this.closeModal();
         } else {
-            this.showNotification(`Failed to save Auto Login configuration: ${result.error}`, 'error');
+            this.showNotification(`Erro ao salvar configuração de Auto Login: ${result.error}`, 'error');
         }
     }
 

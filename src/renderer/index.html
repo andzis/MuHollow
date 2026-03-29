@@ -85,7 +85,7 @@
                 <div class="glass-card news-card">
                     <div class="card-header">
                         <i class="fas fa-bolt"></i>
-                        <span>LATEST NEWS</span>
+                        <span>ÚLTIMAS NOTÍCIAS</span>
                     </div>
                     <div class="news-list">
                         <div class="news-item-new">
@@ -125,12 +125,12 @@
                             <span class="progress-text-new" id="downloadTextFooter">0%</span>
                         </div>
                         <div class="status-row" id="currentFileInfo">
-                            <span class="status-text" id="statusText">Initializing...</span>
+                            <span class="status-text" id="statusText">Inicializando...</span>
                             <div class="account-counter" id="accountCounter">
                                 <span class="counter-text">Online:</span>
                                 <span class="counter-value" id="connectedAccounts">0</span>
                                 <span class="counter-separator">/</span>
-                                <span class="counter-limit">3</span>
+                                <span class="counter-limit" id="counterLimit">500</span>
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                     <!-- PLAY Button -->
                     <button class="play-btn" id="playBtn" disabled>
                         <span class="play-btn-glow"></span>
-                        <span class="play-btn-text">PLAY</span>
+                        <span class="play-btn-text">JOGAR</span>
                     </button>
                 </div>
             </div>
@@ -150,7 +150,7 @@
             <div class="loader-container">
                 <div class="loader-spinner"></div>
                 <div class="loader-text">
-                    <h3>LOADING</h3>
+                    <h3>CARREGANDO</h3>
                 </div>
             </div>
         </div>
@@ -164,7 +164,7 @@
     <div class="modal" id="settingsModal">
         <div class="modal-content settings-modal">
             <div class="modal-header">
-                <h3><i class="fas fa-cog"></i> Game Settings</h3>
+                    <h3><i class="fas fa-cog"></i> Configurações</h3>
                 <button class="modal-close" id="closeSettings">
                     <i class="fas fa-times"></i>
                 </button>
@@ -173,35 +173,35 @@
             <div class="modal-body">
                 <div class="settings-tabs">
                     <button class="tab-btn active" data-tab="display">
-                        <i class="fas fa-desktop"></i> Display
+                        <i class="fas fa-desktop"></i> Tela
                     </button>
                     <button class="tab-btn" data-tab="audio">
-                        <i class="fas fa-volume-up"></i> Audio
+                        <i class="fas fa-volume-up"></i> Áudio
                     </button>
                     <button class="tab-btn" data-tab="language">
-                        <i class="fas fa-globe"></i> Language
+                        <i class="fas fa-globe"></i> Idioma
                     </button>
                 </div>
 
                 <div class="settings-content">
                     <div class="tab-content active" id="display-tab">
                         <div class="setting-group">
-                            <h3>Display Mode</h3>
+                            <h3>Modo de Tela</h3>
                             <div class="radio-group">
                                 <label class="radio-option">
                                     <input type="radio" name="displayMode" value="window" checked>
                                     <span class="radio-custom"></span>
-                                    <span class="radio-label">Window</span>
+                                    <span class="radio-label">Janela</span>
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="displayMode" value="fullscreen">
                                     <span class="radio-custom"></span>
-                                    <span class="radio-label">Fullscreen</span>
+                                    <span class="radio-label">Tela Cheia</span>
                                 </label>
                             </div>
                         </div>
                         <div class="setting-group">
-                            <h3>Resolution</h3>
+                            <h3>Resolução</h3>
                             <select class="resolution-dropdown" id="resolutionSelect">
                                 <option value="640x480">640x480</option>
                                 <option value="800x600">800x600</option>
@@ -219,17 +219,17 @@
 
                     <div class="tab-content" id="audio-tab">
                         <div class="setting-group">
-                            <h3>Audio Settings</h3>
+                            <h3>Configurações de Áudio</h3>
                             <div class="checkbox-group">
                                 <label class="checkbox-option">
                                     <input type="checkbox" id="musicEnabled" checked>
                                     <span class="checkbox-custom"></span>
-                                    <span class="checkbox-label">Music</span>
+                                    <span class="checkbox-label">Música</span>
                                 </label>
                                 <label class="checkbox-option">
                                     <input type="checkbox" id="soundEnabled" checked>
                                     <span class="checkbox-custom"></span>
-                                    <span class="checkbox-label">Sound Effects</span>
+                                    <span class="checkbox-label">Efeitos Sonoros</span>
                                 </label>
                             </div>
                         </div>
@@ -237,7 +237,7 @@
 
                     <div class="tab-content" id="language-tab">
                         <div class="setting-group">
-                            <h3>Game Language</h3>
+                            <h3>Idioma do Jogo</h3>
                             <div class="language-options">
                                 <label class="language-option">
                                     <input type="radio" name="language" value="Eng" checked>
@@ -258,8 +258,8 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelSettings">Cancel</button>
-                <button class="btn btn-primary" id="saveSettings">Save</button>
+                <button class="btn btn-secondary" id="cancelSettings">Cancelar</button>
+                <button class="btn btn-primary" id="saveSettings">Salvar</button>
             </div>
         </div>
     </div>
@@ -279,10 +279,10 @@
                     <label class="checkbox-option">
                         <input type="checkbox" id="onSystemEnabled">
                         <span class="checkbox-custom"></span>
-                        <span class="checkbox-label">Start with system</span>
+                        <span class="checkbox-label">Iniciar com o sistema</span>
                     </label>
                     <div class="account-selector">
-                        <label for="accountAmount">Accounts:</label>
+                        <label for="accountAmount">Contas:</label>
                         <select class="resolution-dropdown" id="accountAmount">
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -296,8 +296,8 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelAutoLogin">Cancel</button>
-                <button class="btn btn-primary" id="saveAutoLogin">Save</button>
+                <button class="btn btn-secondary" id="cancelAutoLogin">Cancelar</button>
+                <button class="btn btn-primary" id="saveAutoLogin">Salvar</button>
             </div>
         </div>
     </div>
@@ -342,7 +342,7 @@
     <div class="modal" id="dataInstallationModal">
         <div class="modal-content data-installation-modal">
             <div class="modal-header">
-                <h3><i class="fas fa-download"></i> Installing Game Client</h3>
+                <h3><i class="fas fa-download"></i> Instalando Cliente do Jogo</h3>
             </div>
 
             <div class="modal-body">
