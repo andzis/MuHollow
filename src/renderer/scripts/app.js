@@ -556,6 +556,34 @@ class MuDMG {
         }, 5000);
     }
 
+    showNoExtractorError() {
+        const container = document.getElementById('notificationContainer');
+        if (!container) return;
+
+        // Remove qualquer alerta anterior do mesmo tipo
+        const existing = container.querySelector('.notification-extractor-error');
+        if (existing) existing.remove();
+
+        const notification = document.createElement('div');
+        notification.className = 'notification error notification-extractor-error';
+        notification.style.cssText = 'display:flex; flex-direction:column; gap:8px; max-width:360px;';
+        notification.innerHTML = `
+            <strong>⚠ Ferramenta de extração não encontrada</strong>
+            <span>Para instalar o cliente do jogo é necessário ter o <b>7-Zip</b> ou <b>WinRAR</b> instalado.</span>
+            <div style="display:flex; gap:8px; margin-top:4px;">
+                <button onclick="ipcRenderer.invoke('open-external-url','https://www.7-zip.org/download.html')"
+                    style="flex:1; padding:6px; background:#c0392b; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:12px;">
+                    Baixar 7-Zip
+                </button>
+                <button onclick="this.closest('.notification-extractor-error').remove()"
+                    style="padding:6px 10px; background:rgba(255,255,255,0.15); color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:12px;">
+                    ✕
+                </button>
+            </div>
+        `;
+        container.appendChild(notification);
+    }
+
     handleDataInstallationProgress(progress) {
         switch (progress.type) {
             case 'start':
@@ -598,7 +626,11 @@ class MuDMG {
                 this.updateDataInstallationModal(progress);
                 setTimeout(() => {
                     this.hideDataInstallationModal();
-                    this.showNotification(progress.message, 'error');
+                    if (progress.message && progress.message.includes('7-Zip')) {
+                        this.showNoExtractorError();
+                    } else {
+                        this.showNotification(progress.message, 'error');
+                    }
                 }, 3000);
                 break;
         }
