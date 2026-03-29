@@ -98,32 +98,17 @@ const gameExecutable = () => URL_CONFIG.GAME_EXECUTABLE || 'main.exe';
 
 // Função helper para obter o diretório do jogo de forma consistente
 function getGameDirectory() {
-  // SEMPRE verificar primeiro o diretório onde o launcher está rodando
-  // pois esse é o diretório correto onde o jogo está instalado
-  const execDir = path.dirname(process.execPath);
-  const exeName = gameExecutable();
+  if (isDev) return process.cwd();
 
-  // Se o executável do jogo está no diretório do executável, usar e atualizar o store
-  if (fs.existsSync(path.join(execDir, exeName))) {
-    const storedPath = store.get('gamePath');
-    // Atualizar o store apenas se for diferente do atual
-    if (storedPath !== execDir) {
-      logEvent('info', `Updating gamePath in store from "${storedPath}" to "${execDir}"`);
-      store.set('gamePath', execDir);
-    }
-    return execDir;
+  // Usar installPath salvo pelo usuário como fonte principal
+  const installPath = store.get('installPath');
+  if (installPath) {
+    logEvent('info', `Using installPath: ${installPath}`);
+    return installPath;
   }
 
-  // Se não encontrou no diretório do executável, verificar o store
-  const storedPath = store.get('gamePath');
-  if (storedPath && fs.existsSync(path.join(storedPath, exeName))) {
-    logEvent('info', `Using stored gamePath: ${storedPath}`);
-    return storedPath;
-  }
-
-  // Fallback para desenvolvimento ou se nada for encontrado
-  logEvent('warning', `${exeName} not found, using fallback directory: ${execDir}`);
-  return isDev ? process.cwd() : execDir;
+  // Fallback: diretório do executável
+  return path.dirname(process.execPath);
 }
 
 let mainWindow;
@@ -135,6 +120,7 @@ let gameDataState = {
   isInstalling: false,
   isInstalled: false,
   canUpdate: false,
+  needsInstallPath: false,
   installationProgress: null
 };
 
@@ -723,9 +709,37 @@ ipcMain.handle('get-game-data-state', async () => {
         isInstalling: gameDataState.isInstalling,
         isInstalled: gameDataState.isInstalled,
         canUpdate: gameDataState.canUpdate,
+        needsInstallPath: gameDataState.needsInstallPath,
         installationProgress: gameDataState.installationProgress
       }
     };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('select-install-folder', async () => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Escolha onde instalar o MuHollow',
+      properties: ['openDirectory', 'createDirectory'],
+      defaultPath: 'C:\\MuHollow'
+    });
+    if (!result.canceled && result.filePaths[0]) {
+      return { success: true, path: result.filePaths[0] };
+    }
+    return { success: false };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('set-install-path', async (event, installPath) => {
+  try {
+    store.set('installPath', installPath);
+    gameDataState.needsInstallPath = false;
+    logEvent('info', `Install path set to: ${installPath}`);
+    return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -911,30 +925,41 @@ async function checkAndInstallGameData() {
       return;
     }
 
-    console.log('[Main] Checking if Data folder exists...');
-    const dataExists = await dataManager.checkDataFolderExists();
-    
-    if (dataExists) {
-      console.log('[Main] Game data folder already exists');
-      logEvent('info', 'Game data folder already exists');
-      
-      gameDataState.isInstalled = true;
-      gameDataState.canUpdate = true;
-      gameDataState.isInstalling = false;
-      
-      if (mainWindow) {
-        mainWindow.webContents.send('game-data-state', {
-          type: 'ready-for-update',
-          message: 'Dados do jogo prontos - pode fazer update',
-          canUpdate: true
-        });
-      }
-      
+    // Verificar se o installPath foi definido pelo usuário
+    const installPath = store.get('installPath');
+    if (!installPath) {
+      console.log('[Main] No install path defined, waiting for user selection...');
+      logEvent('info', 'No install path defined');
+      gameDataState.needsInstallPath = true;
+      gameDataState.canUpdate = false;
       return;
     }
 
-    console.log('[Main] Game data folder not found, starting download...');
-    logEvent('info', 'Game data folder not found, starting download...');
+    console.log('[Main] Checking if game is installed...');
+    const dataExists = await dataManager.checkDataFolderExists();
+
+    if (dataExists) {
+      console.log('[Main] Game already installed at:', installPath);
+      logEvent('info', `Game already installed at: ${installPath}`);
+
+      gameDataState.isInstalled = true;
+      gameDataState.canUpdate = true;
+      gameDataState.isInstalling = false;
+      gameDataState.needsInstallPath = false;
+
+      if (mainWindow) {
+        mainWindow.webContents.send('game-data-state', {
+          type: 'ready-for-update',
+          message: 'Jogo instalado - verificando updates...',
+          canUpdate: true
+        });
+      }
+
+      return;
+    }
+
+    console.log('[Main] Game not installed, starting download to:', installPath);
+    logEvent('info', `Starting download to: ${installPath}`);
 
     gameDataState.isInstalling = true;
     gameDataState.canUpdate = false;

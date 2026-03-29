@@ -6,7 +6,10 @@ const { exec } = require('child_process');
 const execAsync = promisify(exec);
 const axios = require('axios');
 const { app } = require('electron');
+const Store = require('electron-store');
 const URL_CONFIG = require('../shared/url-config');
+
+const store = new Store();
 
 class DataManager {
     constructor() {
@@ -39,7 +42,10 @@ class DataManager {
     }
 
     getBaseDir() {
-        return app.isPackaged ? path.dirname(process.execPath) : process.cwd();
+        if (!app.isPackaged) return process.cwd();
+        const installPath = store.get('installPath');
+        if (installPath) return installPath;
+        return path.dirname(process.execPath);
     }
 
     async checkDataFolderExists() {

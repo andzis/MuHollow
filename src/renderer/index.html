@@ -361,6 +361,42 @@
         </div>
     </div>
 
+    <!-- Modal: Install Location -->
+    <div class="modal" id="installLocationModal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> Instalar MuHollow</h3>
+            </div>
+            <div class="modal-body">
+                <p style="color:#aaa; margin-bottom:16px; font-size:13px;">
+                    Escolha a pasta onde o cliente do jogo será instalado.<br>
+                    Espaço necessário: <strong style="color:#e6b84a;">~408 MB</strong>
+                </p>
+                <div class="setting-group">
+                    <h3>Pasta de instalação</h3>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <input type="text" id="installPathInput" readonly
+                            placeholder="Clique em Procurar para escolher..."
+                            style="flex:1; padding:8px 12px; background:rgba(255,255,255,0.07);
+                                   border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+                                   color:#fff; font-size:13px; outline:none;">
+                        <button id="browseInstallBtn" class="btn btn-secondary" style="white-space:nowrap;">
+                            <i class="fas fa-folder"></i> Procurar
+                        </button>
+                    </div>
+                    <p id="installPathHint" style="color:#666; font-size:11px; margin-top:6px;">
+                        Exemplo: C:\MuHollow
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="confirmInstallBtn" disabled>
+                    <i class="fas fa-download"></i> Instalar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Data Installation -->
     <div class="modal" id="dataInstallationModal">
         <div class="modal-content data-installation-modal">

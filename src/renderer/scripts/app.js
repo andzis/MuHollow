@@ -34,6 +34,9 @@ class MuDMG {
             this.initParticles();
             console.log('[Launcher] Particles initialized');
 
+            this.setupInstallLocationModal();
+            console.log('[Launcher] Install location modal ready');
+
             this.initSidebar();
             console.log('[Launcher] Sidebar initialized');
 
@@ -227,21 +230,25 @@ class MuDMG {
 
             const state = gameDataState.state;
 
+            if (state.needsInstallPath) {
+                this.setPlayButtonText('INSTALAR');
+                this.showInstallLocationModal();
+                return;
+            }
+
             if (state.isInstalling) {
-                console.log('Game data is being installed, waiting...');
                 this.handleUpdateProgress({
                     type: 'waiting',
-                    message: 'Waiting for client download...'
+                    message: 'Baixando cliente do jogo...'
                 });
                 setTimeout(() => { this.checkForUpdates(); }, 5000);
                 return;
             }
 
             if (!state.isInstalled) {
-                console.log('Game data not installed, cannot check for updates');
                 this.handleUpdateProgress({
                     type: 'waiting',
-                    message: 'Waiting for game data installation...'
+                    message: 'Aguardando instalação...'
                 });
                 setTimeout(() => { this.checkForUpdates(); }, 5000);
                 return;
@@ -655,6 +662,48 @@ class MuDMG {
                 }, 3000);
                 break;
         }
+    }
+
+    // ===== INSTALL LOCATION MODAL =====
+    showInstallLocationModal() {
+        const modal = document.getElementById('installLocationModal');
+        if (modal) modal.classList.add('show');
+    }
+
+    hideInstallLocationModal() {
+        const modal = document.getElementById('installLocationModal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    setupInstallLocationModal() {
+        const browseBtn = document.getElementById('browseInstallBtn');
+        const confirmBtn = document.getElementById('confirmInstallBtn');
+        const pathInput = document.getElementById('installPathInput');
+        const hint = document.getElementById('installPathHint');
+
+        if (!browseBtn || !confirmBtn || !pathInput) return;
+
+        browseBtn.addEventListener('click', async () => {
+            const result = await ipcRenderer.invoke('select-install-folder');
+            if (result.success) {
+                pathInput.value = result.path;
+                hint.textContent = result.path;
+                hint.style.color = '#6dbf6d';
+                confirmBtn.disabled = false;
+            }
+        });
+
+        confirmBtn.addEventListener('click', async () => {
+            const installPath = pathInput.value;
+            if (!installPath) return;
+
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando...';
+
+            await ipcRenderer.invoke('set-install-path', installPath);
+            this.hideInstallLocationModal();
+            await ipcRenderer.invoke('install-game-data');
+        });
     }
 
     showDataInstallationModal() {
