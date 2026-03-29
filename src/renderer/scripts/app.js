@@ -280,7 +280,7 @@ class MuDMG {
                 } else {
                     this.handleUpdateProgress({
                         type: 'ready',
-                        message: 'Game is up to date - Ready to play!'
+                        message: 'Jogo atualizado - Pronto para jogar!'
                     });
                     this.enablePlayButton();
                 }
