@@ -125,7 +125,7 @@ class MuDMG {
                 speedX: (Math.random() - 0.5) * 0.3,
                 speedY: -Math.random() * 0.5 - 0.1,
                 opacity: Math.random() * 0.5 + 0.1,
-                hue: Math.random() > 0.5 ? 210 : 270 // ice blue + deep purple
+                hue: Math.random() > 0.5 ? 195 : 210 // ice blue frozen shards
             });
         }
 
