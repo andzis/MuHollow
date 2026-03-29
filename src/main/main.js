@@ -896,6 +896,21 @@ async function checkAndInstallGameData() {
       return;
     }
 
+    // Em dev mode, não baixa o cliente — assume que o jogo está instalado
+    if (isDev) {
+      console.log('[Main] Dev mode: skipping game data check');
+      gameDataState.isInstalled = true;
+      gameDataState.canUpdate = true;
+      if (mainWindow) {
+        mainWindow.webContents.send('game-data-state', {
+          type: 'ready-for-update',
+          message: 'Dev mode - pronto para verificar updates',
+          canUpdate: true
+        });
+      }
+      return;
+    }
+
     console.log('[Main] Checking if Data folder exists...');
     const dataExists = await dataManager.checkDataFolderExists();
     

@@ -45,19 +45,11 @@ class DataManager {
     async checkDataFolderExists() {
         try {
             const exeDir = this.getBaseDir();
-            const rootContents = await fs.readdir(exeDir);
-            
-            console.log(`[DataManager] Checking game data in: ${exeDir}`);
-            
-            const hasGameFiles = rootContents.some(item => 
-                item.toLowerCase().includes('main') || 
-                item.toLowerCase().includes('settings') ||
-                item.toLowerCase().includes('data') ||
-                item.toLowerCase().includes('scripts')
-            );
-            
-            console.log(`[DataManager] Game data exists: ${hasGameFiles}`);
-            return hasGameFiles;
+            const gameExe = URL_CONFIG.GAME_EXECUTABLE || 'main.exe';
+            const gameExePath = path.join(exeDir, gameExe);
+            const exists = await fs.pathExists(gameExePath);
+            console.log(`[DataManager] Checking for ${gameExe} in: ${exeDir} → ${exists}`);
+            return exists;
         } catch (error) {
             console.error('[DataManager] Error checking game data:', error);
             return false;
@@ -297,29 +289,21 @@ class DataManager {
 
             await this.extractDataZip(progressCallback);
 
-            const exeDir = this.getBaseDir();
-            const rootContents = await fs.readdir(exeDir);
+            const installed = await this.checkDataFolderExists();
 
-            const hasGameFiles = rootContents.some(item =>
-                item.toLowerCase().includes('main') ||
-                item.toLowerCase().includes('settings') ||
-                item.toLowerCase().includes('data') ||
-                item.toLowerCase().includes('scripts')
-            );
-
-            if (hasGameFiles) {
+            if (installed) {
                 console.log('[DataManager] Data installation completed successfully!');
-                
+
                 if (progressCallback) {
                     progressCallback({
                         type: 'installation-complete',
                         message: 'Game data installed successfully!'
                     });
                 }
-                
+
                 return true;
             } else {
-                throw new Error('Final verification failed - no game files were copied');
+                throw new Error('Final verification failed - game executable not found after extraction');
             }
 
         } catch (error) {
