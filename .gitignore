@@ -1,0 +1,22 @@
+node_modules/
+dist/
+dist-limpo/
+
+# Arquivos do cliente do jogo (grandes demais para git)
+*.rar
+*.zip
+*.7z
+
+# Logs
+Data/Launcher/Logs/
+
+# Electron build cache
+.webpack/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credenciais (nunca commitar)
+xAccounts.ini

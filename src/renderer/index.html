@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self' http://localhost https://mudmg.com http://muhollow.com.br https://muhollow.com.br; frame-src *;">
+    <title>MU Online</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="../shared/url-config.js"></script>
+</head>
+<body>
+
+    <div class="launcher-wrapper">
+
+        <!-- Particle canvas overlay -->
+        <canvas id="particleCanvas" class="particle-overlay"></canvas>
+
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <div class="logo-container">
+                    <span class="logo-text">MU</span>
+                    <span class="logo-sub">HOLLOW</span>
+                </div>
+            </div>
+            <div class="top-bar-center">
+                <div class="server-badge">
+                    <span class="server-status-dot"></span>
+                    <span class="server-name">SERVIDOR</span>
+                    <span class="server-status-text">ONLINE</span>
+                </div>
+            </div>
+            <div class="top-bar-right">
+                <button class="wc-btn" id="minimizeBtn" title="Minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="wc-btn close" id="closeBtn" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <button class="sidebar-btn active" data-section="home" title="Home">
+                <i class="fas fa-home"></i>
+            </button>
+            <button class="sidebar-btn" id="autoLoginBtn" title="Auto Login">
+                <i class="fas fa-key"></i>
+            </button>
+            <button class="sidebar-btn" id="settingsBtn" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Character Area (left/center - background visual) -->
+            <div class="character-area">
+                <!-- Character art is handled via CSS background -->
+                <div class="character-glow"></div>
+            </div>
+
+            <!-- Right Panel: Stats + Leaderboard -->
+            <div class="right-panel">
+                <!-- PVP Leaderboard -->
+                <div class="glass-card leaderboard-card">
+                    <div class="card-header">
+                        <i class="fas fa-trophy"></i>
+                        <span>TOP PVP PLAYERS</span>
+                    </div>
+                    <div class="leaderboard-list">
+                        <div class="leaderboard-row rank-1">
+                            <span class="rank-number">#1</span>
+                            <div class="player-avatar"><i class="fas fa-skull-crossbones"></i></div>
+                            <span class="player-name">DarkReaper</span>
+                            <span class="player-kills">2,841</span>
+                        </div>
+                        <div class="leaderboard-row rank-2">
+                            <span class="rank-number">#2</span>
+                            <div class="player-avatar"><i class="fas fa-bolt"></i></div>
+                            <span class="player-name">VoidSlayer</span>
+                            <span class="player-kills">2,790</span>
+                        </div>
+                        <div class="leaderboard-row rank-3">
+                            <span class="rank-number">#3</span>
+                            <div class="player-avatar"><i class="fas fa-shield-alt"></i></div>
+                            <span class="player-name">IronPhantom</span>
+                            <span class="player-kills">2,654</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#4</span>
+                            <div class="player-avatar"><i class="fas fa-hat-wizard"></i></div>
+                            <span class="player-name">MagicBlade</span>
+                            <span class="player-kills">2,401</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#5</span>
+                            <div class="player-avatar"><i class="fas fa-dragon"></i></div>
+                            <span class="player-name">DragonSoul</span>
+                            <span class="player-kills">2,288</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#6</span>
+                            <div class="player-avatar"><i class="fas fa-crown"></i></div>
+                            <span class="player-name">WarCrown</span>
+                            <span class="player-kills">2,175</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#7</span>
+                            <div class="player-avatar"><i class="fas fa-fire"></i></div>
+                            <span class="player-name">InfernoX</span>
+                            <span class="player-kills">2,042</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#8</span>
+                            <div class="player-avatar"><i class="fas fa-khanda"></i></div>
+                            <span class="player-name">BladeStorm</span>
+                            <span class="player-kills">1,988</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#9</span>
+                            <div class="player-avatar"><i class="fas fa-ghost"></i></div>
+                            <span class="player-name">NightShade</span>
+                            <span class="player-kills">1,901</span>
+                        </div>
+                        <div class="leaderboard-row">
+                            <span class="rank-number">#10</span>
+                            <div class="player-avatar"><i class="fas fa-feather-alt"></i></div>
+                            <span class="player-name">SkyRider</span>
+                            <span class="player-kills">1,855</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: News + Progress + Play -->
+            <div class="bottom-section">
+                <!-- News Panel -->
+                <div class="glass-card news-card">
+                    <div class="card-header">
+                        <i class="fas fa-bolt"></i>
+                        <span>LATEST NEWS</span>
+                    </div>
+                    <div class="news-list">
+                        <div class="news-item-new">
+                            <span class="news-tag tag-event">EVENT</span>
+                            <span class="news-title-text">Blood Castle Season X</span>
+                            <span class="news-date">Mar 28</span>
+                        </div>
+                        <div class="news-item-new">
+                            <span class="news-tag tag-patch">PATCH</span>
+                            <span class="news-title-text">Patch 1.4.2 - Balance Update</span>
+                            <span class="news-date">Mar 25</span>
+                        </div>
+                        <div class="news-item-new">
+                            <span class="news-tag tag-news">NEWS</span>
+                            <span class="news-title-text">New Season Starting Soon</span>
+                            <span class="news-date">Mar 22</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress + Play Area -->
+                <div class="play-area">
+                    <!-- Update Progress -->
+                    <div class="update-progress-section" id="updateProgressFooter">
+                        <div class="progress-row">
+                            <span class="progress-label">TOTAL</span>
+                            <div class="progress-bar-new">
+                                <div class="progress-fill-new" id="overallProgressFooter"></div>
+                            </div>
+                            <span class="progress-text-new" id="overallTextFooter">0%</span>
+                        </div>
+                        <div class="progress-row">
+                            <span class="progress-label">UPDATE</span>
+                            <div class="progress-bar-new">
+                                <div class="progress-fill-new" id="downloadProgressFooter"></div>
+                            </div>
+                            <span class="progress-text-new" id="downloadTextFooter">0%</span>
+                        </div>
+                        <div class="status-row" id="currentFileInfo">
+                            <span class="status-text" id="statusText">Initializing...</span>
+                            <div class="account-counter" id="accountCounter">
+                                <span class="counter-text">Online:</span>
+                                <span class="counter-value" id="connectedAccounts">0</span>
+                                <span class="counter-separator">/</span>
+                                <span class="counter-limit">3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PLAY Button -->
+                    <button class="play-btn" id="playBtn" disabled>
+                        <span class="play-btn-glow"></span>
+                        <span class="play-btn-text">PLAY</span>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Loader -->
+        <div class="main-loader" id="mainLoader">
+            <div class="loader-container">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">
+                    <h3>LOADING</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Modal: Settings -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Game Settings</h3>
+                <button class="modal-close" id="closeSettings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="display">
+                        <i class="fas fa-desktop"></i> Display
+                    </button>
+                    <button class="tab-btn" data-tab="audio">
+                        <i class="fas fa-volume-up"></i> Audio
+                    </button>
+                    <button class="tab-btn" data-tab="language">
+                        <i class="fas fa-globe"></i> Language
+                    </button>
+                </div>
+
+                <div class="settings-content">
+                    <div class="tab-content active" id="display-tab">
+                        <div class="setting-group">
+                            <h3>Display Mode</h3>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="displayMode" value="window" checked>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-label">Window</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="displayMode" value="fullscreen">
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-label">Fullscreen</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <h3>Resolution</h3>
+                            <select class="resolution-dropdown" id="resolutionSelect">
+                                <option value="640x480">640x480</option>
+                                <option value="800x600">800x600</option>
+                                <option value="1024x768">1024x768</option>
+                                <option value="1280x1024">1280x1024</option>
+                                <option value="1366x768">1366x768</option>
+                                <option value="1440x900">1440x900</option>
+                                <option value="1600x900">1600x900</option>
+                                <option value="1920x1080" selected>1920x1080</option>
+                                <option value="2560x1440">2560x1440</option>
+                                <option value="3840x2160">3840x2160 (4K)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="audio-tab">
+                        <div class="setting-group">
+                            <h3>Audio Settings</h3>
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="musicEnabled" checked>
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">Music</span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" id="soundEnabled" checked>
+                                    <span class="checkbox-custom"></span>
+                                    <span class="checkbox-label">Sound Effects</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="language-tab">
+                        <div class="setting-group">
+                            <h3>Game Language</h3>
+                            <div class="language-options">
+                                <label class="language-option">
+                                    <input type="radio" name="language" value="Eng" checked>
+                                    <span class="language-custom">English</span>
+                                </label>
+                                <label class="language-option">
+                                    <input type="radio" name="language" value="Por">
+                                    <span class="language-custom">Portugues</span>
+                                </label>
+                                <label class="language-option">
+                                    <input type="radio" name="language" value="Spa">
+                                    <span class="language-custom">Espanol</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettings">Cancel</button>
+                <button class="btn btn-primary" id="saveSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Auto Login -->
+    <div class="modal" id="autoLoginModal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Auto Login</h3>
+                <button class="modal-close" id="closeAutoLogin">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="auto-login-controls">
+                    <label class="checkbox-option">
+                        <input type="checkbox" id="onSystemEnabled">
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">Start with system</span>
+                    </label>
+                    <div class="account-selector">
+                        <label for="accountAmount">Accounts:</label>
+                        <select class="resolution-dropdown" id="accountAmount">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="accounts-grid" id="accountsGrid"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelAutoLogin">Cancel</button>
+                <button class="btn btn-primary" id="saveAutoLogin">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Data Installation -->
+    <div class="modal" id="dataInstallationModal">
+        <div class="modal-content data-installation-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-download"></i> Installing Game Client</h3>
+            </div>
+
+            <div class="modal-body">
+                <div class="installation-content-compact">
+                    <div class="progress-section-compact" id="downloadProgressSection">
+                        <div class="progress-label-row-compact">
+                            <span class="progress-label-compact">Download:</span>
+                            <span class="progress-percentage-compact" id="downloadProgressPercentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container-compact">
+                            <div class="progress-bar-compact">
+                                <div class="progress-fill-compact" id="downloadProgressFill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-details-compact" id="downloadProgressDetails">
+                            <span class="download-speed-compact" id="downloadSpeed">0 MB/s</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-section-compact">
+                        <div class="progress-label-row-compact">
+                            <span class="progress-label-compact">Overall:</span>
+                            <span class="progress-percentage-compact" id="overallProgressPercentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container-compact">
+                            <div class="progress-bar-compact overall-progress-bar-compact">
+                                <div class="progress-fill-compact" id="overallProgressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="current-status-compact" id="currentStatus">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="currentStatusText">Initializing...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const rankingWv = document.getElementById('rankingWebview');
+            if (rankingWv) rankingWv.src = URL_CONFIG.RANKING_URL;
+        });
+    </script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/settings.js"></script>
+    <script src="scripts/game-settings.js"></script>
+    <script src="scripts/auto-login.js"></script>
+
+</body>
+</html>
