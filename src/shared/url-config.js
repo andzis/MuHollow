@@ -21,7 +21,7 @@ const URL_CONFIG = {
   },
 
   // ===== DOWNLOAD DO CLIENTE COMPLETO =====
-  GITHUB_DOWNLOAD: 'https://github.com/yourrepo/download/Client.zip',
+  GITHUB_DOWNLOAD: 'https://github.com/andzis/MuHollow/releases/download/MuOnline/MuHollow.rar',
 
   // ===== CDN EXTERNOS =====
   CDN: {
