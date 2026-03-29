@@ -248,9 +248,10 @@ class MuDMG {
             }
 
             console.log('Game data ready, checking for updates...');
+            this.setPlayButtonText('VERIFICANDO...');
             this.handleUpdateProgress({
                 type: 'check',
-                message: 'Checking for updates...'
+                message: 'Verificando atualizações...'
             });
 
             const gameDirResult = await ipcRenderer.invoke('get-game-directory');
@@ -354,10 +355,11 @@ class MuDMG {
 
         this.isUpdating = true;
         this.disablePlayButton();
+        this.setPlayButtonText('ATUALIZANDO...');
 
         this.handleUpdateProgress({
             type: 'ready',
-            message: 'Starting update process...'
+            message: 'Iniciando atualização...'
         });
 
         try {
@@ -398,22 +400,25 @@ class MuDMG {
     handleGameDataStateChange(stateData) {
         switch (stateData.type) {
             case 'installing':
+                this.setPlayButtonText('BAIXANDO...');
                 this.handleUpdateProgress({
                     type: 'waiting',
-                    message: stateData.message || 'Waiting for client download...'
+                    message: stateData.message || 'Baixando cliente do jogo...'
                 });
                 break;
             case 'ready-for-update':
+                this.setPlayButtonText('VERIFICANDO...');
                 this.handleUpdateProgress({
                     type: 'ready',
-                    message: stateData.message || 'Game data ready - checking updates...'
+                    message: stateData.message || 'Verificando atualizações...'
                 });
                 setTimeout(() => { this.checkForUpdates(); }, 1000);
                 break;
             case 'error':
+                this.setPlayButtonText('ERRO');
                 this.handleUpdateProgress({
                     type: 'error',
-                    message: stateData.message || 'Data installation error'
+                    message: stateData.message || 'Erro na instalação'
                 });
                 break;
         }
@@ -527,10 +532,20 @@ class MuDMG {
         }
     }
 
+    setPlayButtonText(text) {
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) {
+            const btnText = playBtn.querySelector('.play-btn-text');
+            if (btnText) btnText.textContent = text;
+            else playBtn.textContent = text;
+        }
+    }
+
     enablePlayButton() {
         this.isReadyToPlay = true;
         const playBtn = document.getElementById('playBtn');
         if (playBtn) playBtn.disabled = false;
+        this.setPlayButtonText('PLAY');
     }
 
     disablePlayButton() {
@@ -588,6 +603,7 @@ class MuDMG {
         switch (progress.type) {
             case 'start':
             case 'download-start':
+                this.setPlayButtonText('BAIXANDO...');
                 this.showDataInstallationModal();
                 this.updateDataInstallationModal(progress);
                 break;
@@ -595,13 +611,16 @@ class MuDMG {
                 if (!document.getElementById('dataInstallationModal').classList.contains('show')) {
                     this.showDataInstallationModal();
                 }
+                this.setPlayButtonText(`BAIXANDO ${progress.progress || 0}%`);
                 this.updateDataInstallationModal(progress);
                 break;
             case 'download-complete':
             case 'extract-start':
+                this.setPlayButtonText('EXTRAINDO...');
                 this.updateDataInstallationModal(progress);
                 break;
             case 'extract-progress':
+                this.setPlayButtonText(`EXTRAINDO ${progress.progress || 0}%`);
                 this.updateDataInstallationModal(progress);
                 break;
             case 'extract-complete':
@@ -615,6 +634,7 @@ class MuDMG {
                 this.enablePlayButton();
                 break;
             case 'data-exists':
+                this.setPlayButtonText('VERIFICANDO...');
                 this.handleUpdateProgress({
                     type: 'ready',
                     message: progress.message
@@ -623,6 +643,7 @@ class MuDMG {
                 break;
             case 'installation-error':
             case 'error':
+                this.setPlayButtonText('ERRO');
                 this.updateDataInstallationModal(progress);
                 setTimeout(() => {
                     this.hideDataInstallationModal();
