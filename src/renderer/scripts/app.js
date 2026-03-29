@@ -125,7 +125,7 @@ class MuDMG {
                 speedX: (Math.random() - 0.5) * 0.3,
                 speedY: -Math.random() * 0.5 - 0.1,
                 opacity: Math.random() * 0.5 + 0.1,
-                hue: Math.random() > 0.5 ? 30 : 42 // warm gold embers
+                hue: Math.random() > 0.5 ? 210 : 270 // ice blue + deep purple
             });
         }
 
@@ -146,13 +146,13 @@ class MuDMG {
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.opacity})`;
+                ctx.fillStyle = `hsla(${p.hue}, 85%, 70%, ${p.opacity})`;
                 ctx.fill();
 
                 // Subtle glow
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius * 3, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.opacity * 0.15})`;
+                ctx.fillStyle = `hsla(${p.hue}, 85%, 70%, ${p.opacity * 0.18})`;
                 ctx.fill();
             });
 
